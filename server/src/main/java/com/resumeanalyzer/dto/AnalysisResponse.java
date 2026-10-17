@@ -7,6 +7,7 @@ import java.util.Map;
 public record AnalysisResponse(
     Long id,
     Long resumeId,
+    String jobDescriptionText,
     Double matchScore,
     List<String> missingKeywords,
     Map<String, Object> sectionScores,
