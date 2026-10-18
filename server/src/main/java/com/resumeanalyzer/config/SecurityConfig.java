@@ -1,6 +1,8 @@
 package com.resumeanalyzer.config;
 
 import com.resumeanalyzer.security.JwtAuthFilter;
+import com.resumeanalyzer.security.RestAuthenticationEntryPoint;
+import com.resumeanalyzer.security.RestAccessDeniedHandler;
 import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,14 +16,20 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-
 @Configuration
 public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
+    private final RestAuthenticationEntryPoint authenticationEntryPoint;
+    private final RestAccessDeniedHandler accessDeniedHandler;
 
-    public SecurityConfig(JwtAuthFilter jwtAuthFilter) {
+    public SecurityConfig(
+            JwtAuthFilter jwtAuthFilter,
+            RestAuthenticationEntryPoint authenticationEntryPoint,
+            RestAccessDeniedHandler accessDeniedHandler) {
         this.jwtAuthFilter = jwtAuthFilter;
+        this.authenticationEntryPoint = authenticationEntryPoint;
+        this.accessDeniedHandler = accessDeniedHandler;
     }
 
     // Encodes passwords one-way using bcrypt, so the raw password is never stored.
@@ -36,6 +44,9 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable()) // not needed for a stateless JSON API
             .cors(cors -> {})
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .exceptionHandling(ex -> ex
+                .authenticationEntryPoint(authenticationEntryPoint)
+                .accessDeniedHandler(accessDeniedHandler))
             .authorizeHttpRequests(auth -> auth
                 // Routes that don't require a logged-in user.
                 .requestMatchers("/api/health", "/api/auth/**", "/error").permitAll()
@@ -46,6 +57,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -59,3 +71,4 @@ public class SecurityConfig {
         return source;
     }
 }
+
