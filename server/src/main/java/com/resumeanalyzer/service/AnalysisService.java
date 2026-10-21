@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class AnalysisService {
@@ -44,7 +43,7 @@ public class AnalysisService {
         analysis.setJobDescriptionText(request.jobDescriptionText());
         analysis.setMatchScore(result.score());
         analysis.setMissingKeywords(result.missingKeywords());
-        analysis.setSectionScores(Map.of());
+        analysis.setSectionScores(scoringService.analyzeSections(resume.getExtractedText(), request.jobDescriptionText()));
 
         return toResponse(analysisRepository.save(analysis));
     }
