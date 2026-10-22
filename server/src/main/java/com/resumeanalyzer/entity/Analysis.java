@@ -33,6 +33,10 @@ public class Analysis {
     @Column(name = "missing_keywords", columnDefinition = "json")
     private List<String> missingKeywords;
 
+    @Convert(converter = StringListConverter.class)
+    @Column(name = "suggestions", columnDefinition = "json")
+    private List<String> suggestions;
+
     @Convert(converter = StringObjectMapConverter.class)
     @Column(name = "section_scores", columnDefinition = "json")
     private Map<String, Object> sectionScores;
@@ -61,6 +65,9 @@ public class Analysis {
 
     public List<String> getMissingKeywords() { return missingKeywords; }
     public void setMissingKeywords(List<String> missingKeywords) { this.missingKeywords = missingKeywords; }
+
+    public List<String> getSuggestions() { return suggestions; }
+    public void setSuggestions(List<String> suggestions) { this.suggestions = suggestions; }
 
     public Map<String, Object> getSectionScores() { return sectionScores; }
     public void setSectionScores(Map<String, Object> sectionScores) { this.sectionScores = sectionScores; }

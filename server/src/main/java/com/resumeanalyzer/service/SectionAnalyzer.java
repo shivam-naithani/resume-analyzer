@@ -86,6 +86,16 @@ public final class SectionAnalyzer {
         return result;
     }
 
+    /** Raw text of each of the four sections; a section that wasn't found maps to an empty string. */
+    public static Map<String, String> extractSections(String resumeText) {
+        Map<String, StringBuilder> found = splitIntoSections(resumeText);
+        Map<String, String> result = new LinkedHashMap<>();
+        for (String section : SECTIONS) {
+            result.put(section, found.containsKey(section) ? found.get(section).toString() : "");
+        }
+        return result;
+    }
+
     private static Map<String, StringBuilder> splitIntoSections(String resumeText) {
         Map<String, StringBuilder> sections = new HashMap<>();
         if (resumeText == null || resumeText.isBlank()) return sections;

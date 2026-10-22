@@ -317,4 +317,22 @@ class SectionAnalyzerTest {
         String resume = "PROJECTS\nCRM System with dashboards\nCo-Curricular Activities\nChess club captain\n";
         assertEquals(4, section(SectionAnalyzer.analyze(resume, JD), "projects").get("wordCount"));
     }
+
+    @Test
+    void extractSectionsReturnsTheRawTextOfEachSection() {
+        var sections = SectionAnalyzer.extractSections(FULL_RESUME);
+
+        assertTrue(sections.get("skills").contains("Spring Boot"));
+        assertTrue(sections.get("projects").contains("CRM System"));
+        assertFalse(sections.get("projects").contains("Docker fundamentals")); // certifications excluded
+    }
+
+    @Test
+    void extractSectionsGivesEmptyTextForMissingSectionsAndNullInput() {
+        var sections = SectionAnalyzer.extractSections(null);
+
+        assertEquals(java.util.List.of("education", "skills", "experience", "projects"),
+                new java.util.ArrayList<>(sections.keySet()));
+        assertEquals("", sections.get("projects"));
+    }
 }

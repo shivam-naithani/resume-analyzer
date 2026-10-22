@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class AnalysisService {
@@ -22,8 +23,8 @@ public class AnalysisService {
     private final ScoringService scoringService;
 
     public AnalysisService(ResumeRepository resumeRepository,
-                           AnalysisRepository analysisRepository,
-                           ScoringService scoringService) {
+                          AnalysisRepository analysisRepository,
+                          ScoringService scoringService) {
         this.resumeRepository = resumeRepository;
         this.analysisRepository = analysisRepository;
         this.scoringService = scoringService;
@@ -33,17 +34,30 @@ public class AnalysisService {
         // Same 404 whether the resume doesn't exist or belongs to someone else,
         // so callers can't probe which resume IDs exist.
         Resume resume = resumeRepository.findByIdAndUserId(request.resumeId(), userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Resume not found"));
+                .orElseThrow(() ->
+                        new ResponseStatusException(HttpStatus.NOT_FOUND, "Resume not found"));
+
+        String resumeText = resume.getExtractedText();
 
         ScoringEngine.MatchResult result =
-                scoringService.scoreResumeAgainstJD(resume.getExtractedText(), request.jobDescriptionText());
+                scoringService.scoreResumeAgainstJD(
+                        resumeText,
+                        request.jobDescriptionText());
+
+        Map<String, Object> sectionScores =
+                scoringService.analyzeSections(
+                        resumeText,
+                        request.jobDescriptionText());
 
         Analysis analysis = new Analysis();
         analysis.setResume(resume);
         analysis.setJobDescriptionText(request.jobDescriptionText());
         analysis.setMatchScore(result.score());
         analysis.setMissingKeywords(result.missingKeywords());
-        analysis.setSectionScores(scoringService.analyzeSections(resume.getExtractedText(), request.jobDescriptionText()));
+        analysis.setSectionScores(sectionScores);
+        analysis.setSuggestions(
+                scoringService.generateSuggestions(
+                        resumeText, result, sectionScores));
 
         return toResponse(analysisRepository.save(analysis));
     }
@@ -59,7 +73,9 @@ public class AnalysisService {
     public AnalysisResponse getAnalysis(Long userId, Long id) {
         // Same 404 for "doesn't exist" and "belongs to someone else".
         Analysis analysis = analysisRepository.findByIdAndResume_User_Id(id, userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Analysis not found"));
+                .orElseThrow(() ->
+                        new ResponseStatusException(HttpStatus.NOT_FOUND, "Analysis not found"));
+
         return toResponse(analysis);
     }
 
@@ -71,6 +87,7 @@ public class AnalysisService {
                 a.getMatchScore(),
                 a.getMissingKeywords(),
                 a.getSectionScores(),
+                a.getSuggestions(),
                 a.getCreatedAt());
     }
 

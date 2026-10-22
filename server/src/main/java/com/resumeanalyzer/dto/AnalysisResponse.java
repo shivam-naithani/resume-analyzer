@@ -11,5 +11,6 @@ public record AnalysisResponse(
     Double matchScore,
     List<String> missingKeywords,
     Map<String, Object> sectionScores,
+    List<String> suggestions,
     LocalDateTime createdAt
 ) {}
