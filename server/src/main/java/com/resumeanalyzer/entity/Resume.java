@@ -17,7 +17,7 @@ public class Resume {
     private User user;
 
     @Lob
-    @Column(name = "extracted_text", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "extracted_text", nullable = false, columnDefinition = "MEDIUMTEXT")
     private String extractedText;
 
     @Column(name = "original_filename")

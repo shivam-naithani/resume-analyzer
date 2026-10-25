@@ -37,6 +37,40 @@ class PdfExtractorTest {
             PdfExtractor.extractText(new ByteArrayInputStream("not a pdf".getBytes())));
     }
 
+    @Test
+    void rejectsAPdfWithMoreTextThanTheLimit() throws IOException {
+        byte[] pdf = buildPdf("This line is long enough to go over a tiny limit");
+
+        IOException ex = assertThrows(IOException.class,
+                     () -> PdfExtractor.extractText(new ByteArrayInputStream(pdf), 20));
+
+        assertTrue(ex.getMessage().contains("too much text to be a resume"));
+        assertTrue(ex.getMessage().contains("over 20 characters"));
+    }
+
+    @Test
+    void acceptsAPdfWithinTheLimit() throws IOException {
+        byte[] pdf = buildPdf("React", "Spring Boot");
+
+        String text = PdfExtractor.extractText(new ByteArrayInputStream(pdf), 1000);
+
+        assertTrue(text.contains("Spring Boot"));
+    }
+
+    @Test
+    void rejectsADocumentOverTheDefaultLimitWithAReadableMessage() throws IOException {
+        String line = "word ".repeat(40); // 200 characters
+        String[] lines = new String[600];   // about 120,000 characters of text
+        java.util.Arrays.fill(lines, line);
+        byte[] pdf = buildPdf(lines);
+
+        IOException ex = assertThrows(IOException.class,
+                () -> PdfExtractor.extractText(new ByteArrayInputStream(pdf)));
+
+        assertEquals("This PDF contains too much text to be a resume (over 100,000 characters). "
+                + "Please upload only your resume.", ex.getMessage());
+    }
+
     private static byte[] buildPdf(String... lines) throws IOException {
         try (PDDocument document = new PDDocument()) {
             PDPage page = new PDPage();

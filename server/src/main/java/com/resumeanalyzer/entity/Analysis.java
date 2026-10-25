@@ -23,7 +23,7 @@ public class Analysis {
     private Resume resume;
 
     @Lob
-    @Column(name = "job_description_text", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "job_description_text", nullable = false, columnDefinition = "MEDIUMTEXT")
     private String jobDescriptionText;
 
     @Column(name = "match_score", nullable = false)
