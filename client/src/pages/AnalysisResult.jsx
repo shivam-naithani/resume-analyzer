@@ -1,7 +1,15 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import AnalysisDashboard from '../components/AnalysisDashboard';
 import { getAnalysis } from '../services/analyses';
 import { parseApiError } from '../services/errors';
+
+function formatDate(value) {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime())
+    ? null
+    : date.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+}
 
 export default function AnalysisResult() {
   const { id } = useParams();
@@ -38,12 +46,18 @@ export default function AnalysisResult() {
     );
   }
 
+  const analyzedOn = formatDate(result.analysis.createdAt);
+
   return (
-    <section className="page">
-      <h1>Analysis result</h1>
-      <p className="result-score">{result.analysis.matchScore}%</p>
-      <p>Match score against the job description you provided.</p>
-      <Link to="/analyze" className="btn btn-secondary">Analyze another resume</Link>
+    <section>
+      <header className="result-header">
+        <div>
+          <h1>Analysis result</h1>
+          {analyzedOn && <p className="muted">Analyzed on {analyzedOn}</p>}
+        </div>
+        <Link to="/analyze" className="btn btn-secondary">Analyze another resume</Link>
+      </header>
+      <AnalysisDashboard analysis={result.analysis} />
     </section>
   );
 }
