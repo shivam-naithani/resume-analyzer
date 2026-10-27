@@ -44,4 +44,42 @@ class ScoringEngineTest {
         assertFalse(result.missingKeywords().contains("docker")); // present in resume -> not missing
         assertTrue(result.missingKeywords().contains("kubernetes")); // absent from resume -> missing
     }
+
+        @Test
+    void missingKeywordsLeaveOutJobDescriptionFiller() {
+        String jd = "We are looking for strong knowledge of Docker and Kubernetes. "
+                + "Familiarity with AWS is preferred and must include testing. Candidates required.";
+
+        var result = ScoringEngine.computeMatch("Java developer", jd);
+
+        assertTrue(result.missingKeywords().containsAll(java.util.List.of("docker", "kubernetes", "aws", "testing")));
+        for (String filler : java.util.List.of("looking", "strong", "knowledge", "familiarity",
+                "preferred", "include", "candidates", "required")) {
+            assertFalse(result.missingKeywords().contains(filler), filler + " should not be listed");
+        }
+    }
+
+    @Test
+    void fillerWordsCannotCrowdRealKeywordsOutOfTheCap() {
+        // 17 filler words, each repeated 3 times, outrank "aws" and "docker" (said once) by frequency.
+        String filler = "required strong knowledge familiarity preferred looking include candidate excellent "
+                + "proven ability responsible understanding working desired ideal efficient ";
+        String jd = filler.repeat(3) + "aws docker";
+
+        var result = ScoringEngine.computeMatch("Java developer", jd);
+
+        assertEquals(2, result.missingKeywords().stream()
+                .filter(k -> k.equals("aws") || k.equals("docker")).count());
+        assertTrue(result.missingKeywords().stream().noneMatch(JobDescriptionFiller::isFiller));
+    }
+
+    @Test
+    void fillerWordsStillCountTowardTheScore() {
+        // Display-only filter: scoring is unchanged, so texts made of filler words still match fully.
+        var result = ScoringEngine.computeMatch("strong knowledge required", "strong knowledge required");
+
+        assertEquals(100.0, result.score());
+        assertTrue(result.missingKeywords().isEmpty());
+    }
+
 }

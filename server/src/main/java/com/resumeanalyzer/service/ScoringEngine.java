@@ -84,6 +84,7 @@ public final class ScoringEngine {
 
         return jdTf.keySet().stream()
                 .filter(term -> !resumeTf.containsKey(term))
+                .filter(term -> !JobDescriptionFiller.isFiller(term))   
                 .sorted((a, b) -> Double.compare(
                         jdTf.get(b) * idf.get(b),
                         jdTf.get(a) * idf.get(a)))

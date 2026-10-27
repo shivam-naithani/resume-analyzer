@@ -32,20 +32,6 @@ public final class SuggestionEngine {
             "experience", "include internships or work experience, even short ones",
             "projects", "add two or three projects that use the technologies the job asks for");
 
-    // Job-description filler that shows up as a "missing keyword" but isn't a skill.
-    private static final Set<String> GENERIC_TERMS = Set.of(
-            // original list
-            "required", "strong", "familiarity", "knowledge", "experience", "plus", "ability",
-            "skills", "excellent", "looking", "must", "preferred", "understanding", "working",
-            "responsible", "team", "years", "good", "candidate", "role", "using", "including",
-            "related", "degree", "proven", "similar", "basic", "hands", "systems", "developer",
-            "engineer", "work", "etc",
-            // plural / verb forms and other filler seen in real job descriptions
-            "developers", "developing", "responsibilities", "graduate", "collaborating",
-            "unit", "object", "oriented", "include", "writing", "services", "engineers",
-            "engineering", "implementing", "intern", "internship", "join", "opportunity",
-            "seeking", "ideal", "eager", "learn", "building", "support", "help");
-
     private static final Pattern YEAR = Pattern.compile("\\b(?:19|20)\\d{2}\\b");
 
     private SuggestionEngine() {}
@@ -99,7 +85,7 @@ public final class SuggestionEngine {
     private static List<String> usefulKeywords(List<String> missingKeywords) {
         if (missingKeywords == null) return List.of();
         return missingKeywords.stream()
-                .filter(keyword -> !GENERIC_TERMS.contains(keyword))
+                .filter(keyword -> !JobDescriptionFiller.isFiller(keyword))
                 .limit(MAX_KEYWORDS_SHOWN)
                 .toList();
     }
