@@ -68,7 +68,7 @@ public final class SectionAnalyzer {
 
     public static Map<String, Object> analyze(String resumeText, String jdText) {
         Map<String, StringBuilder> sectionText = splitIntoSections(resumeText);
-        Set<String> jdTerms = new HashSet<>(TextTokenizer.tokenize(jdText));
+        Set<String> jdTerms = new HashSet<>(JobDescriptionFiller.withoutFiller(TextTokenizer.tokenize(jdText)));
 
         Map<String, Object> result = new LinkedHashMap<>();
         for (String section : SECTIONS) {

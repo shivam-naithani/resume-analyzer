@@ -45,7 +45,7 @@ class ScoringEngineTest {
         assertTrue(result.missingKeywords().contains("kubernetes")); // absent from resume -> missing
     }
 
-        @Test
+    @Test
     void missingKeywordsLeaveOutJobDescriptionFiller() {
         String jd = "We are looking for strong knowledge of Docker and Kubernetes. "
                 + "Familiarity with AWS is preferred and must include testing. Candidates required.";
@@ -74,11 +74,21 @@ class ScoringEngineTest {
     }
 
     @Test
-    void fillerWordsStillCountTowardTheScore() {
-        // Display-only filter: scoring is unchanged, so texts made of filler words still match fully.
+    void fillerWordsDoNotAffectTheScore() {
+        double plain = ScoringEngine.computeMatch("Java Spring Docker", "Java Spring Kubernetes").score();
+
+        double withFiller = ScoringEngine.computeMatch(
+                "Java Spring Docker strong knowledge required",
+                "Java Spring Kubernetes looking preferred experience").score();
+
+        assertEquals(plain, withFiller);
+    }
+
+    @Test
+    void textMadeOnlyOfFillerScoresZero() {
         var result = ScoringEngine.computeMatch("strong knowledge required", "strong knowledge required");
 
-        assertEquals(100.0, result.score());
+        assertEquals(0.0, result.score());
         assertTrue(result.missingKeywords().isEmpty());
     }
 

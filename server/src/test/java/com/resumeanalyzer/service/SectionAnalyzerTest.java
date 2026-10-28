@@ -335,4 +335,14 @@ class SectionAnalyzerTest {
                 new java.util.ArrayList<>(sections.keySet()));
         assertEquals("", sections.get("projects"));
     }
+
+    @Test
+    void fillerWordsInTheJobDescriptionDoNotDiluteCoverage() {
+        String jd = "Java Spring required strong knowledge preferred";
+        String resume = "Skills\nJava Spring";
+
+        var result = SectionAnalyzer.analyze(resume, jd);
+
+        assertEquals(100.0, section(result, "skills").get("keywordCoverage"));
+    }
 }

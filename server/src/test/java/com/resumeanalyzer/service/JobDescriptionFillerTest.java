@@ -31,4 +31,11 @@ class JobDescriptionFillerTest {
         assertFalse(JobDescriptionFiller.isFiller(null));
         assertFalse(JobDescriptionFiller.isFiller(""));
     }
+
+    @Test
+    void withoutFillerKeepsOnlyRealKeywordsInOrder() {
+        var tokens = List.of("strong", "java", "required", "spring", "knowledge");
+
+        assertEquals(List.of("java", "spring"), JobDescriptionFiller.withoutFiller(tokens));
+    }
 }

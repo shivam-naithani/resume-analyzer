@@ -18,8 +18,8 @@ public final class ScoringEngine {
     public record MatchResult(double score, List<String> missingKeywords) {}
 
     public static MatchResult computeMatch(String resumeText, String jdText) {
-        List<String> resumeTokens = TextTokenizer.tokenize(resumeText);
-        List<String> jdTokens = TextTokenizer.tokenize(jdText);
+        List<String> resumeTokens = JobDescriptionFiller.withoutFiller(TextTokenizer.tokenize(resumeText));
+        List<String> jdTokens = JobDescriptionFiller.withoutFiller(TextTokenizer.tokenize(jdText));
 
         Set<String> vocabulary = new HashSet<>();
         vocabulary.addAll(resumeTokens);
@@ -84,7 +84,6 @@ public final class ScoringEngine {
 
         return jdTf.keySet().stream()
                 .filter(term -> !resumeTf.containsKey(term))
-                .filter(term -> !JobDescriptionFiller.isFiller(term))   
                 .sorted((a, b) -> Double.compare(
                         jdTf.get(b) * idf.get(b),
                         jdTf.get(a) * idf.get(a)))

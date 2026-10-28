@@ -1,14 +1,13 @@
 package com.resumeanalyzer.service;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
 /**
  * Words that fill job descriptions ("strong knowledge required", "looking for a team player")
- * but are not skills a candidate could add to a resume. They are hidden from the missing-keyword
- * list and from suggestions. They still count in the match score and keyword coverage, so
- * existing scores are unaffected.
- *
+ * but are not skills a candidate could add to a resume. They are ignored everywhere keywords
+ * are compared: the match score, keyword coverage, missing keywords and suggestions.
  * Keep this list to genuine filler. Adding a real skill here would hide a keyword the
  * candidate should see.
  */
@@ -44,5 +43,9 @@ public final class JobDescriptionFiller {
 
     public static boolean isFiller(String term) {
         return term != null && FILLER.contains(term.toLowerCase(Locale.ROOT));
+    }
+
+    public static List<String> withoutFiller(List<String> tokens) {
+        return tokens.stream().filter(token -> !isFiller(token)).toList();
     }
 }
