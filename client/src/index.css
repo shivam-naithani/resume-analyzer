@@ -599,3 +599,63 @@ a {
     grid-template-columns: 1fr;
   }
 }
+
+/* ---------- History ---------- */
+
+.history-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #fff;
+}
+
+.history-item:hover {
+  border-color: var(--teal);
+  background: var(--surface);
+}
+
+.history-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.history-name {
+  font-weight: 600;
+  color: var(--navy);
+  overflow-wrap: anywhere;
+}
+
+.history-score {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--teal);
+  white-space: nowrap;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 2rem 1.5rem;
+}
+
+.empty-state h2 {
+  margin-top: 0;
+}
+
+.empty-state .form-banner {
+  text-align: left;
+}

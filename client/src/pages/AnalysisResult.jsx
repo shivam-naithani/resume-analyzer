@@ -3,13 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import AnalysisDashboard from '../components/AnalysisDashboard';
 import { getAnalysis } from '../services/analyses';
 import { parseApiError } from '../services/errors';
-
-function formatDate(value) {
-  const date = new Date(value);
-  return Number.isNaN(date.getTime())
-    ? null
-    : date.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
-}
+import { formatDateTime } from '../utils/formatDate';
 
 export default function AnalysisResult() {
   const { id } = useParams();
@@ -46,7 +40,7 @@ export default function AnalysisResult() {
     );
   }
 
-  const analyzedOn = formatDate(result.analysis.createdAt);
+  const analyzedOn = formatDateTime(result.analysis.createdAt);
 
   return (
     <section>
