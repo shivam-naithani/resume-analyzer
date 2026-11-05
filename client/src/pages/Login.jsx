@@ -38,6 +38,7 @@ export default function Login() {
   return (
     <section className="auth-card">
       <h1>Log in</h1>
+      <p className="auth-subtitle">Welcome back. Log in to see your analyses.</p>
 
       {location.state?.message && <p className="form-banner notice">{location.state.message}</p>}
       {error && <p className="form-banner error" role="alert">{error}</p>}

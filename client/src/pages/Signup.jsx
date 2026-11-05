@@ -38,6 +38,7 @@ export default function Signup() {
   return (
     <section className="auth-card">
       <h1>Create an account</h1>
+      <p className="auth-subtitle">Save your analyses and revisit them any time.</p>
 
       {error && <p className="form-banner error" role="alert">{error}</p>}
 
