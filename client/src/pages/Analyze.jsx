@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import FileDropzone from '../components/FileDropzone';
 import FormField from '../components/FormField';
 import { createAnalysis } from '../services/analyses';
 import { parseApiError } from '../services/errors';
@@ -33,10 +34,12 @@ export default function Analyze() {
   // The resume that was already uploaded for the selected file, so a retry doesn't upload it twice.
   const [uploaded, setUploaded] = useState(null);
 
-  const handleFileChange = (event) => {
-    const selected = event.target.files[0] ?? null;
+  const busy = status !== 'idle';
+
+  const handleFileSelect = (selected) => {
     setFile(selected);
     setFileError(selected ? validateFile(selected) : '');
+    setUploaded(null);
   };
 
   const handleSubmit = async (event) => {
@@ -44,6 +47,7 @@ export default function Analyze() {
 
     const problem = validateFile(file);
     if (problem) {
+      setError('');
       setFileError(problem);
       return;
     }
@@ -83,23 +87,27 @@ export default function Analyze() {
   };
 
   return (
-    <section className="analyze-card">
-      <h1>Analyze your resume</h1>
-      <p className="intro">
-        Upload your resume and paste the job description you are applying for. We compare the two
-        and show you how well they match.
-      </p>
+    <section className="analyze">
+      <header className="analyze-header">
+        <h1>Analyze your resume</h1>
+        <p className="intro">
+          Upload your resume and paste the job description you are applying for. We compare the two
+          and show you how well they match.
+        </p>
+      </header>
 
       {error && <p className="form-banner error" role="alert">{error}</p>}
 
-      <form onSubmit={handleSubmit}>
-        <FormField
-          label="Resume (PDF, up to 5 MB)"
+      <form className="analyze-form" onSubmit={handleSubmit}>
+        <FileDropzone
           name="resume"
-          type="file"
+          label="Resume"
+          hint="PDF only, up to 5 MB. Scanned images without selectable text cannot be analyzed."
           accept="application/pdf"
-          onChange={handleFileChange}
+          file={file}
           error={fileError}
+          disabled={busy}
+          onSelect={handleFileSelect}
         />
         <FormField
           as="textarea"
@@ -109,13 +117,30 @@ export default function Analyze() {
           required
           maxLength={MAX_DESCRIPTION_LENGTH}
           placeholder="Paste the full job description here"
+          hint={`${jobDescription.length.toLocaleString()} / ${MAX_DESCRIPTION_LENGTH.toLocaleString()} characters`}
           value={jobDescription}
           onChange={(event) => setJobDescription(event.target.value)}
           error={fieldErrors.jobDescriptionText}
         />
-        <button type="submit" className="btn btn-primary" disabled={status !== 'idle'}>
-          {BUTTON_LABELS[status]}
-        </button>
+
+        <div className="analyze-actions">
+          <button type="submit" className="btn btn-primary btn-lg" disabled={busy}>
+            {busy && <span className="spinner" aria-hidden="true" />}
+            {BUTTON_LABELS[status]}
+          </button>
+          <div role="status">
+            {busy && (
+              <ol className="progress">
+                <li className={status === 'uploading' ? 'progress-step active' : 'progress-step done'}>
+                  Upload resume
+                </li>
+                <li className={status === 'analyzing' ? 'progress-step active' : 'progress-step'}>
+                  Analyze match
+                </li>
+              </ol>
+            )}
+          </div>
+        </div>
       </form>
     </section>
   );

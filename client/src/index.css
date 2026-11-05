@@ -635,24 +635,34 @@ a {
 
 /* ---------- Analyze and result ---------- */
 
-.analyze-card {
+.analyze {
   max-width: 720px;
   margin: 0 auto;
 }
 
-.analyze-card .intro {
+.analyze-header h1 {
+  margin: 0 0 0.5rem;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.analyze-header .intro {
+  margin: 0 0 1.5rem;
   color: var(--muted);
-  margin-bottom: 1.5rem;
+}
+
+.analyze-form {
+  padding: 1.75rem;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 12px 32px rgba(30, 39, 97, 0.06);
 }
 
 .form-field textarea {
   min-height: 12rem;
   resize: vertical;
-}
-
-.form-field input[type='file'] {
-  padding: 0.5rem;
-  background: var(--surface);
 }
 
 .form-hint {
@@ -663,6 +673,228 @@ a {
 
 .status-text {
   color: var(--muted);
+}
+
+.dropzone {
+  border: 2px dashed var(--input-border);
+  border-radius: 14px;
+  background: var(--surface);
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.dropzone:not(.has-file):hover,
+.dropzone.dragging {
+  border-color: var(--teal);
+}
+
+.dropzone.dragging {
+  background: var(--teal-soft);
+}
+
+.dropzone.has-file {
+  border-style: solid;
+  border-color: var(--border);
+  background: #fff;
+}
+
+.dropzone.invalid {
+  border-color: #b3261e;
+}
+
+.dropzone-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  width: 100%;
+  padding: 1.75rem 1rem;
+  font: inherit;
+  text-align: center;
+  background: none;
+  border: 0;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.dropzone-prompt:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.dropzone-icon {
+  color: var(--teal);
+}
+
+.dropzone-title {
+  font-weight: 600;
+  color: var(--navy);
+}
+
+.dropzone-title span {
+  color: var(--teal);
+  text-decoration: underline;
+}
+
+.dropzone-prompt:focus-visible,
+.dropzone-action:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+}
+
+.dropzone-file {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 1rem 1.1rem;
+}
+
+.dropzone-file-icon {
+  display: flex;
+  flex: 0 0 44px;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--teal-soft);
+  color: var(--teal);
+}
+
+.dropzone-file-info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.dropzone-file-name {
+  font-weight: 600;
+  color: var(--navy);
+  overflow-wrap: anywhere;
+}
+
+.dropzone-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.dropzone-action {
+  padding: 0.4rem 0.8rem;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--navy);
+  background: #fff;
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.dropzone-action:hover {
+  background: var(--surface);
+}
+
+.dropzone-action:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.analyze-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.spinner {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  margin-right: 0.5rem;
+  vertical-align: -0.15em;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.progress {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.progress-step {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.progress-step::before {
+  content: '';
+  flex-shrink: 0;
+  width: 1.1rem;
+  height: 1.1rem;
+  border: 2px solid var(--border);
+  border-radius: 50%;
+}
+
+.progress-step.active {
+  font-weight: 600;
+  color: var(--navy);
+}
+
+.progress-step.active::before {
+  border-color: var(--teal);
+  border-top-color: transparent;
+  animation: spin 0.8s linear infinite;
+}
+
+.progress-step.done {
+  color: var(--teal-dark);
+}
+
+.progress-step.done::before {
+  content: '\2713';
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-color: var(--teal);
+  background: var(--teal);
+  color: #fff;
+  font-size: 0.7rem;
+  line-height: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner,
+  .progress-step.active::before {
+    animation: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .analyze-form {
+    padding: 1.25rem;
+  }
+
+  .dropzone-file {
+    flex-wrap: wrap;
+  }
+
+  .dropzone-actions {
+    flex-basis: 100%;
+  }
 }
 
 /* ---------- Results dashboard ---------- */
