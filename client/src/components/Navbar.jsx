@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
+import { CloseIcon, LogoIcon, MenuIcon } from './icons';
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -18,7 +19,8 @@ export default function Navbar() {
     <header className="navbar">
       <div className="container navbar-inner">
         <Link to="/" className="brand" onClick={close}>
-          Resume Analyzer
+          <LogoIcon size={26} />
+          <span>Resume <span className="brand-accent">Analyzer</span></span>
         </Link>
 
         <button
@@ -26,12 +28,13 @@ export default function Navbar() {
           className="menu-toggle"
           aria-label="Toggle navigation menu"
           aria-expanded={open}
+          aria-controls="site-nav"
           onClick={() => setOpen((value) => !value)}
         >
-          {open ? '\u2715' : '\u2630'}
+          {open ? <CloseIcon size={22} /> : <MenuIcon size={22} />}
         </button>
 
-        <nav className={open ? 'nav nav-open' : 'nav'}>
+        <nav id="site-nav" className={open ? 'nav nav-open' : 'nav'}>
           <NavLink to="/analyze" onClick={close}>Analyze</NavLink>
           <NavLink to="/history" onClick={close}>History</NavLink>
           <span className="nav-spacer" />
@@ -44,7 +47,7 @@ export default function Navbar() {
             </>
           ) : (
             <>
-              <NavLink to="/login" onClick={close}>Log in</NavLink>
+              <NavLink to="/login" className="nav-login" onClick={close}>Log in</NavLink>
               <NavLink to="/signup" className="btn btn-primary" onClick={close}>Sign up</NavLink>
             </>
           )}

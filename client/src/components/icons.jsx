@@ -68,3 +68,28 @@ export function ChartIcon(props) {
     </Icon>
   );
 }
+
+export function LogoIcon(props) {
+  return (
+    <Icon {...props}>
+      <path d="M7 3h7l5 5v13H7z" />
+      <path d="M14 3v5h5M10 13h6M10 17h6" />
+    </Icon>
+  );
+}
+
+export function MenuIcon(props) {
+  return (
+    <Icon {...props}>
+      <path d="M4 7h16M4 12h16M4 17h16" />
+    </Icon>
+  );
+}
+
+export function CloseIcon(props) {
+  return (
+    <Icon {...props}>
+      <path d="M6 6l12 12M18 6L6 18" />
+    </Icon>
+  );
+}
