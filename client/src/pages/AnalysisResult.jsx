@@ -27,14 +27,30 @@ export default function AnalysisResult() {
 
   // Still waiting for the analysis that belongs to the current URL.
   if (result.forId !== id) {
-    return <p className="status-text">Loading analysis...</p>;
+    return (
+      <section aria-busy="true">
+        <p className="sr-only" role="status">Loading analysis...</p>
+        <div className="skeleton skeleton-title" />
+        <div className="skeleton skeleton-line" />
+        <div className="dashboard" aria-hidden="true">
+          <div className="dashboard-top">
+            <div className="skeleton skeleton-card" />
+            <div className="skeleton skeleton-card" />
+          </div>
+          <div className="dashboard-bottom">
+            <div className="skeleton skeleton-card" />
+            <div className="skeleton skeleton-card" />
+          </div>
+        </div>
+      </section>
+    );
   }
 
   if (result.error) {
     return (
-      <section className="page">
+      <section className="card empty-state">
         <h1>Analysis not available</h1>
-        <p>{result.error}</p>
+        <p className="muted">{result.error}</p>
         <Link to="/analyze" className="btn btn-primary">Analyze a resume</Link>
       </section>
     );
@@ -44,6 +60,7 @@ export default function AnalysisResult() {
 
   return (
     <section>
+      <Link to="/history" className="back-link">&larr; Your analyses</Link>
       <header className="result-header">
         <div>
           <h1>Analysis result</h1>
