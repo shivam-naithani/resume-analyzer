@@ -16,4 +16,6 @@ public interface AnalysisRepository extends JpaRepository<Analysis, Long> {
 
     @EntityGraph(attributePaths = "resume")
     Optional<Analysis> findByIdAndResume_User_Id(Long id, Long userId);
+    // True when some other analysis still uses the given resume.
+    boolean existsByResume_IdAndIdNot(Long resumeId, Long id);
 }

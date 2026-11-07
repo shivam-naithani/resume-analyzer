@@ -39,4 +39,10 @@ public class AnalysisController {
     public AnalysisResponse getAnalysis(@AuthenticationPrincipal Long userId, @PathVariable Long id) {
         return analysisService.getAnalysis(userId, id);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteAnalysis(@AuthenticationPrincipal Long userId, @PathVariable Long id) {
+        analysisService.deleteAnalysis(userId, id);
+        return ResponseEntity.noContent().build();
+    }
 }

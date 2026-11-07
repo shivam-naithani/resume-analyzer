@@ -79,6 +79,24 @@ public class AnalysisService {
         return toResponse(analysis);
     }
 
+    @Transactional
+    public void deleteAnalysis(Long userId, Long id) {
+        // Same 404 for "doesn't exist" and "belongs to someone else".
+        Analysis analysis = analysisRepository.findByIdAndResume_User_Id(id, userId)
+                .orElseThrow(() ->
+                        new ResponseStatusException(HttpStatus.NOT_FOUND, "Analysis not found"));
+
+        // One resume can back several analyses, so only remove it once nothing else uses it.
+        Resume resume = analysis.getResume();
+        boolean usedElsewhere = analysisRepository.existsByResume_IdAndIdNot(resume.getId(), analysis.getId());
+
+        // The analysis goes first because it holds the foreign key to the resume.
+        analysisRepository.delete(analysis);
+        if (!usedElsewhere) {
+            resumeRepository.delete(resume);
+        }
+    }
+
     private AnalysisResponse toResponse(Analysis a) {
         return new AnalysisResponse(
                 a.getId(),
