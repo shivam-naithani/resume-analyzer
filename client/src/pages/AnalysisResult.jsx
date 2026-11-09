@@ -1,13 +1,17 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import AnalysisDashboard from '../components/AnalysisDashboard';
-import { getAnalysis } from '../services/analyses';
+import { deleteAnalysis, getAnalysis } from '../services/analyses';
 import { parseApiError } from '../services/errors';
 import { formatDateTime } from '../utils/formatDate';
 
 export default function AnalysisResult() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [result, setResult] = useState({ forId: null, analysis: null, error: '' });
+  const [confirming, setConfirming] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState('');
 
   useEffect(() => {
     let cancelled = false;
@@ -24,6 +28,23 @@ export default function AnalysisResult() {
       cancelled = true;
     };
   }, [id]);
+
+  const handleDelete = async () => {
+    setDeleting(true);
+    setDeleteError('');
+    try {
+      await deleteAnalysis(id);
+    } catch (err) {
+      // 404 means it is already gone (for example, deleted in another tab), which is the goal.
+      if (err?.response?.status !== 404) {
+        setDeleteError(parseApiError(err).message);
+        setDeleting(false);
+        return;
+      }
+    }
+    // Replace the entry so the Back button doesn't return to a deleted result.
+    navigate('/history', { replace: true });
+  };
 
   // Still waiting for the analysis that belongs to the current URL.
   if (result.forId !== id) {
@@ -66,8 +87,47 @@ export default function AnalysisResult() {
           <h1>Analysis result</h1>
           {analyzedOn && <p className="muted">Analyzed on {analyzedOn}</p>}
         </div>
-        <Link to="/analyze" className="btn btn-secondary">Analyze another resume</Link>
+        <div className="result-actions">
+          <Link to="/analyze" className="btn btn-secondary">Analyze another resume</Link>
+          <button
+            type="button"
+            className="btn btn-danger"
+            aria-expanded={confirming}
+            aria-controls="delete-confirm"
+            disabled={deleting}
+            onClick={() => setConfirming(true)}
+          >
+            Delete analysis
+          </button>
+        </div>
       </header>
+
+      {confirming && (
+        <div id="delete-confirm" className="confirm-bar" role="alert">
+          <p>
+            Delete this analysis? This can&apos;t be undone. If no other analysis uses the uploaded
+            resume, its extracted text is deleted too.
+          </p>
+          <div className="confirm-actions">
+            <button type="button" className="btn btn-danger-solid" disabled={deleting} onClick={handleDelete}>
+              {deleting ? 'Deleting...' : 'Yes, delete'}
+            </button>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              disabled={deleting}
+              onClick={() => {
+                setConfirming(false);
+                setDeleteError('');
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+      {deleteError && <p className="form-banner error" role="alert">{deleteError}</p>}
+
       <AnalysisDashboard analysis={result.analysis} />
     </section>
   );
