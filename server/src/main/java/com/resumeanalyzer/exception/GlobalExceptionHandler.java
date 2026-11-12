@@ -24,6 +24,7 @@ import org.springframework.web.multipart.support.MissingServletRequestPartExcept
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.time.ZoneOffset;
 
 /**
  * Extends Spring's ResponseEntityExceptionHandler so that every standard MVC
@@ -48,7 +49,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ApiError> handleUnexpected(Exception ex, HttpServletRequest request) {
         log.error("Unhandled exception on {} {}", request.getMethod(), request.getRequestURI(), ex);
         ApiError body = new ApiError(
-                LocalDateTime.now(),
+                LocalDateTime.now(ZoneOffset.UTC),
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
                 "An unexpected error occurred",
@@ -111,7 +112,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 : null;
 
         ApiError body = new ApiError(
-                LocalDateTime.now(),
+                LocalDateTime.now(ZoneOffset.UTC),
                 status.value(),
                 reason,
                 message != null ? message : reason,

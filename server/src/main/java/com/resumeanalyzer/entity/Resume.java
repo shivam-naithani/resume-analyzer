@@ -2,6 +2,7 @@ package com.resumeanalyzer.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 @Entity
 @Table(name = "resumes")
@@ -28,7 +29,7 @@ public class Resume {
 
     @PrePersist
     protected void onCreate() {
-        this.uploadedAt = LocalDateTime.now();
+        this.uploadedAt = LocalDateTime.now(ZoneOffset.UTC);
     }
 
     // --- getters and setters ---

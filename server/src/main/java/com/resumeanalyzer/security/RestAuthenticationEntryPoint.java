@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 @Component
 public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
@@ -28,7 +29,7 @@ public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
         ApiError body = new ApiError(
-                LocalDateTime.now(),
+                LocalDateTime.now(ZoneOffset.UTC),
                 HttpServletResponse.SC_UNAUTHORIZED,
                 "Unauthorized",
                 "Authentication is required to access this resource",

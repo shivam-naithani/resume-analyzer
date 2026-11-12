@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 @Component
 public class RestAccessDeniedHandler implements AccessDeniedHandler {
@@ -28,7 +29,7 @@ public class RestAccessDeniedHandler implements AccessDeniedHandler {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
         ApiError body = new ApiError(
-                LocalDateTime.now(),
+                LocalDateTime.now(ZoneOffset.UTC),
                 HttpServletResponse.SC_FORBIDDEN,
                 "Forbidden",
                 "You do not have permission to access this resource",

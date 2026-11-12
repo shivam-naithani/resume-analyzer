@@ -7,9 +7,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ClockConfig {
 
-    // A bean so tests can swap in a fixed clock.
+    // UTC, to match the UTC timestamps stored in the database. A bean so tests can swap in a fixed clock.
     @Bean
     public Clock clock() {
-        return Clock.systemDefaultZone();
+        return Clock.systemUTC();
     }
 }

@@ -5,6 +5,7 @@ import com.resumeanalyzer.converter.StringObjectMapConverter;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 
@@ -44,9 +45,10 @@ public class Analysis {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    // Timestamps are stored in UTC, whatever timezone the server runs in.
     @PrePersist
     protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now(ZoneOffset.UTC);
     }
 
     // --- getters and setters ---
