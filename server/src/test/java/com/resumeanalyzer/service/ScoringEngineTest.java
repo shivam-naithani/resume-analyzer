@@ -92,4 +92,29 @@ class ScoringEngineTest {
         assertTrue(result.missingKeywords().isEmpty());
     }
 
+    @Test
+    void textMadeOfSymbolTermsStillScores() {
+        // "C++" used to be stripped to nothing, so this scored 0.
+        assertEquals(100.0, ScoringEngine.computeMatch("C++ developer", "C++ developer").score());
+    }
+
+    @Test
+    void missingKeywordsShowWholeTermsInsteadOfFragments() {
+        var missing = ScoringEngine.computeMatch("Java developer",
+                "CI/CD, problem solving and Node.js").missingKeywords();
+
+        assertTrue(missing.containsAll(java.util.List.of("ci/cd", "problem solving", "node.js")));
+        for (String fragment : java.util.List.of("ci", "cd", "problem", "solving", "node", "js")) {
+            assertFalse(missing.contains(fragment), fragment + " is a fragment of a whole term");
+        }
+    }
+
+    @Test
+    void differentSpellingsOfATermMatchEachOther() {
+        var result = ScoringEngine.computeMatch("Experienced with NodeJS and back-end development",
+                "Node.js backend");
+
+        assertTrue(result.missingKeywords().isEmpty());
+    }
+
 }

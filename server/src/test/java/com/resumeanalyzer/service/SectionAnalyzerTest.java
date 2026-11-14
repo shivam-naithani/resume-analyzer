@@ -345,4 +345,11 @@ class SectionAnalyzerTest {
 
         assertEquals(100.0, section(result, "skills").get("keywordCoverage"));
     }
+
+    @Test
+    void wholeTermsCountTowardsSectionCoverage() {
+        var result = SectionAnalyzer.analyze("Skills\nDocker CI/CD Git", "Docker CI/CD");
+
+        assertEquals(100.0, section(result, "skills").get("keywordCoverage"));
+    }
 }
