@@ -23,6 +23,8 @@ export default function FileDropzone({
   // Cancelling the picker can report an empty selection; keep the current file in that case.
   const handleChange = (event) => {
     const selected = event.target.files[0];
+    // Clearing the native input lets the browser fire change again for the same file.
+    event.target.value = '';
     if (selected) onSelect(selected);
   };
 
