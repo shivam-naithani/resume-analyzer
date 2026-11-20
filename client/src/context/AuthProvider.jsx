@@ -2,24 +2,47 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AuthContext } from './AuthContext';
 import { setUnauthorizedHandler } from '../services/api';
 import { loginRequest, signupRequest } from '../services/auth';
-import { clearSession, loadSession, saveSession } from '../services/authStorage';
+import {
+  broadcastSessionEnd,
+  clearSession,
+  loadSession,
+  saveSession,
+  SESSION_EVENT_KEY,
+} from '../services/authStorage';
 
 export default function AuthProvider({ children }) {
   const [session, setSession] = useState(loadSession);
   // Why the last session ended: 'user' (clicked log out) or 'expired' (the server rejected the token).
   const [logoutReason, setLogoutReason] = useState(null);
 
-  const endSession = useCallback((reason) => {
+  const endSession = useCallback((reason, broadcast = true) => {
     clearSession();
     setSession(null);
     setLogoutReason(reason);
+    if (broadcast) broadcastSessionEnd(reason);
   }, []);
 
   const logout = useCallback(() => endSession('user'), [endSession]);
 
   useEffect(() => {
     setUnauthorizedHandler(() => endSession('expired'));
-    return () => setUnauthorizedHandler(null);
+
+    const handleStorage = (event) => {
+      if (event.key !== SESSION_EVENT_KEY || !event.newValue) return;
+
+      try {
+        const { reason } = JSON.parse(event.newValue);
+        endSession(reason === 'user' ? 'user' : 'expired', false);
+      } catch {
+        endSession('expired', false);
+      }
+    };
+
+    window.addEventListener('storage', handleStorage);
+    return () => {
+      setUnauthorizedHandler(null);
+      window.removeEventListener('storage', handleStorage);
+    };
   }, [endSession]);
 
   const login = useCallback(async (email, password) => {

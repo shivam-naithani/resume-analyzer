@@ -1,5 +1,6 @@
 const TOKEN_KEY = 'token';
 const USER_KEY = 'user';
+export const SESSION_EVENT_KEY = 'session-event';
 
 export const getToken = () => localStorage.getItem(TOKEN_KEY);
 
@@ -11,6 +12,10 @@ export function saveSession(token, user) {
 export function clearSession() {
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(USER_KEY);
+}
+
+export function broadcastSessionEnd(reason = 'expired') {
+  localStorage.setItem(SESSION_EVENT_KEY, JSON.stringify({ reason, at: Date.now() }));
 }
 
 // Reads the "exp" claim from the JWT payload. A token that can't be read counts as expired.
