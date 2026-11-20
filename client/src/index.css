@@ -727,11 +727,112 @@ a {
   outline-offset: 2px;
 }
 
+.dropzone-selected {
+  overflow: hidden;
+}
+
 .dropzone-file {
   display: flex;
   align-items: center;
   gap: 0.9rem;
   padding: 1rem 1.1rem;
+}
+
+.dropzone-preview-actions {
+  display: block;
+  padding: 0 1.1rem 1rem;
+}
+
+.pdf-preview-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+}
+
+.pdf-preview-backdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: rgba(12, 15, 28, 0.72);
+  cursor: pointer;
+}
+
+.pdf-preview-dialog {
+  position: relative;
+  width: min(960px, 94vw);
+  height: min(820px, 88vh);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--page);
+  box-shadow: 0 24px 72px rgba(0, 0, 0, 0.35);
+}
+
+.pdf-preview-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 52px;
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--navy);
+  background: var(--page);
+}
+
+.pdf-preview-title {
+  max-width: 55%;
+  overflow: hidden;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pdf-preview-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.pdf-preview-open {
+  color: var(--teal);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.pdf-preview-open:hover {
+  text-decoration: underline;
+}
+
+.pdf-preview-close {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid #b3261e;
+  border-radius: 8px;
+  color: #b3261e;
+  background: #fdecea;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.pdf-preview-close:hover {
+  color: #fff;
+  background: #b3261e;
+}
+
+.pdf-preview-dialog iframe {
+  display: block;
+  width: 100%;
+  height: calc(100% - 52px);
+  border: 0;
+  background: var(--surface);
 }
 
 .dropzone-file-icon {
@@ -880,6 +981,17 @@ a {
 
   .dropzone-actions {
     flex-basis: 100%;
+  }
+
+  .pdf-preview-modal {
+    padding: 0;
+  }
+
+  .pdf-preview-dialog {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    border-radius: 0;
   }
 }
 
